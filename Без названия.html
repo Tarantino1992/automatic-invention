@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по анимации</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            text-align: left;
+        }
+        .modal-content h2 {
+            text-align: center;
+        }
+        .question {
+            margin-bottom: 15px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <button class="btn" onclick="startQuiz()">Начать тест</button>
+    
+    <div id="quizModal" class="modal">
+        <div class="modal-content">
+            <h2 id="quizTitle">Проверка твоих знаний в анимации</h2>
+            <div id="quiz"></div>
+            <button id="nextBtn" class="btn" onclick="nextQuestion()">Далее</button>
+            <button id="resultBtn" class="btn" onclick="showResults()" style="display: none;">Показать результаты</button>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            {
+                question: "Какой принцип анимации связан с преувеличением движений?",
+                options: ["Сквош и стретч", "Тайминг", "Перекрывающее действие", "Экспозиция"],
+                correct: 0
+            },
+            {
+                question: "Какой софт чаще всего используют для 3D-анимации?",
+                options: ["Adobe After Effects", "Blender", "Toon Boom Harmony", "Autodesk Maya"],
+                correct: 3
+            },
+            {
+                question: "Что такое \"интерполяция\" в анимации?",
+                options: ["Автоматическое создание промежуточных кадров", "Добавление теней", "Монтаж", "Наложение текстур"],
+                correct: 0
+            },
+            {
+                question: "Что такое \"ключевые кадры\"?",
+                options: ["Кадры, определяющие основные положения движения", "Первые кадры фильма", "Фоновые изображения", "Кадры с максимальным разрешением"],
+                correct: 0
+            }
+        ];
+        
+        let currentQuestion = 0;
+        let score = 0;
+
+        function startQuiz() {
+            document.getElementById("quizModal").style.display = "flex";
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById("resultBtn").style.display = "none";
+            document.getElementById("nextBtn").style.display = "block";
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            let quizDiv = document.getElementById("quiz");
+            quizDiv.innerHTML = ""; // Очищаем предыдущий вопрос
+            let q = questions[currentQuestion];
+            let questionBlock = document.createElement("div");
+            questionBlock.classList.add("question");
+            questionBlock.innerHTML = `<p>${currentQuestion + 1}. ${q.question}</p>`;
+            q.options.forEach((option, i) => {
+                questionBlock.innerHTML += `
+                    <label>
+                        <input type="radio" name="answer" value="${i}">
+                        ${option}
+                    </label><br>`;
+            });
+            quizDiv.appendChild(questionBlock);
+            updateTitle();
+        }
+
+        function nextQuestion() {
+            let selected = document.querySelector("input[name='answer']:checked");
+            if (!selected) {
+                alert("Выберите вариант ответа!");
+                return;
+            }
+
+            if (parseInt(selected.value) === questions[currentQuestion].correct) {
+                score++;
+            }
+
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                document.getElementById("nextBtn").style.display = "none";
+                document.getElementById("resultBtn").style.display = "block";
+            }
+        }
+
+        function updateTitle() {
+            const titles = [
+                "Та нафига такие вопросы",
+                "Нафига мне эта анимация",
+                "Ща нейронки все сами делают",
+                "Завязываю с этим курсом"
+            ];
+            document.getElementById("quizTitle").innerText = titles[currentQuestion] || "Проверка твоих знаний в анимации";
+        }
+
+        function showResults() {
+            document.getElementById("quiz").innerHTML = `<h3>Ну ты блин Аниматор:) Вы набрали ${score} из ${questions.length} правильных ответов!</h3>`;
+            document.getElementById("resultBtn").style.display = "none";
+        }
+    </script>
+</body>
+</html>
